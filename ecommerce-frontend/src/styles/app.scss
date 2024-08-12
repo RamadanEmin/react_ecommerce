@@ -1,0 +1,45 @@
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    user-select: none;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+button {
+    &:disabled {
+        cursor: not-allowed !important;
+        opacity: 0.5;
+    }
+}
+
+$color1: white;
+$color2: rgb(46, 46, 46);
+$color3: rgb(0, 104, 136);
+
+.red {
+    color: red;
+}
+
+.purple {
+    color: rgb(47, 0, 255);
+}
+
+.green {
+    color: rgb(0, 195, 0);
+}
+
+@import 'admin-styles/mixin';
