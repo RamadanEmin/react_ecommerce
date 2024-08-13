@@ -23,7 +23,6 @@ const App = () => {
                 </Routes>
             </Router>
         </Suspense >
-
     )
 }
 

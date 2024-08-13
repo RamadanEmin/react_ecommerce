@@ -4,6 +4,7 @@ import { FaRegBell } from 'react-icons/fa';
 import { HiTrendingDown, HiTrendingUp } from 'react-icons/hi';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import { BarChart, DoughnutChart } from '../../components/admin/Charts';
+import Table from '../../components/admin/DashboardTable';
 import data from '../../assets/data.json';
 
 const userImg =
@@ -95,6 +96,7 @@ const Dashboard = () => {
                             <BiMaleFemale />
                         </p>
                     </div>
+                    <Table data={data.transaction} />
                 </section>
             </main>
         </div>
