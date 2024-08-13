@@ -1,6 +1,7 @@
 import { BsSearch } from 'react-icons/bs';
 import { FaRegBell } from 'react-icons/fa';
 import { HiTrendingDown, HiTrendingUp } from 'react-icons/hi';
+import AdminSidebar from '../../components/admin/AdminSidebar';
 import data from '../../assets/data.json';
 
 const userImg =
@@ -9,6 +10,7 @@ const userImg =
 const Dashboard = () => {
     return (
         <div className="admin-container">
+            <AdminSidebar />
             <main className="dashboard">
                 <div className="bar">
                     <BsSearch />
