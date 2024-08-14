@@ -9,6 +9,7 @@ const Search = lazy(() => import('./pages/search'));
 const Dashboard = lazy(() => import('./pages/admin/dashboard'));
 const Products = lazy(() => import('./pages/admin/products'));
 const Customers = lazy(() => import('./pages/admin/customers'));
+const Transaction = lazy(() => import('./pages/admin/transaction'));
 
 const App = () => {
     return (
@@ -23,6 +24,7 @@ const App = () => {
                         <Route path='/admin/dashboard' element={<Dashboard />} />
                         <Route path='/admin/product' element={<Products />} />
                         <Route path='/admin/customer' element={<Customers />} />
+                        <Route path='/admin/transaction' element={<Transaction />} />
                     </Route>
                 </Routes>
             </Router>
