@@ -46,6 +46,8 @@ const App = () => {
                         <Route path='/admin/product/new' element={<NewProduct />} />
 
                         <Route path='/admin/product/:id' element={<ProductManagement />} />
+
+                        <Route path='/admin/transaction/:id' element={<TransactionManagement />} />
                     </Route>
                 </Routes>
             </Router>
