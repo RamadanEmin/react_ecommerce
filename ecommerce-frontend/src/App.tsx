@@ -15,6 +15,12 @@ const Piecharts = lazy(() => import('./pages/admin/charts/piecharts'));
 const Linecharts = lazy(() => import('./pages/admin/charts/linecharts'));
 const Coupon = lazy(() => import('./pages/admin/apps/coupon'));
 const NewProduct = lazy(() => import('./pages/admin/management/newproduct'));
+const ProductManagement = lazy(
+    () => import('./pages/admin/management/productmanagement')
+);
+const TransactionManagement = lazy(
+    () => import('./pages/admin/management/transactionmanagement')
+);
 
 const App = () => {
     return (
@@ -38,6 +44,8 @@ const App = () => {
                         <Route path='/admin/app/coupon' element={<Coupon />} />
 
                         <Route path='/admin/product/new' element={<NewProduct />} />
+
+                        <Route path='/admin/product/:id' element={<ProductManagement />} />
                     </Route>
                 </Routes>
             </Router>
