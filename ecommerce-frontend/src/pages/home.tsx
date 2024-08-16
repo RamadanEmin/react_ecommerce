@@ -22,7 +22,7 @@ const Home = () => {
                     price={3000}
                     stock={50}
                     handler={addToCartHandler}
-                    photo="https://laptop.bg/system/images/268159/normal/apple_macbook_air_133_m1_november_2020_mgn93zea.jpg"
+                    photo="https://cdn.ozone.bg/media/catalog/product/cache/1/image/400x498/a4e40ebdc3e371adff845072e1c73f37/l/a/ed5c71a52c7ecfaa4f01d07f5eb3d534/laptop-apple---macbook-air-15--153----m3-8-10--8gb-512gb--sin-30.jpg"
                 />
             </main>
         </div>
