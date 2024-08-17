@@ -1,5 +1,17 @@
 import { Link } from "react-router-dom";
 import ProductCard from "../components/product-card";
+import image1 from '../assets/images/image1.png';
+import image2 from '../assets/images/image2.png';
+import image3 from '../assets/images/image3.png';
+import image4 from '../assets/images/image4.png';
+import { ImageSlider } from '../components/imageSlider';
+
+const IMAGES = [
+    { url: image1, alt: 'Image One' },
+    { url: image2, alt: 'Image Two' },
+    { url: image3, alt: 'Image Three' },
+    { url: image4, alt: 'Image Four' }
+];
 
 const Home = () => {
     const addToCartHandler = () => {
@@ -8,7 +20,17 @@ const Home = () => {
 
     return (
         <div className="home">
-            <section></section>
+
+            <div style={{
+                maxWidth: '1200px',
+                width: '100%',
+                height: '500px',
+                aspectRatio: '1 / 2',
+                margin: '0 auto'
+            }}>
+                <ImageSlider images={IMAGES} />
+            </div>
+
             <h1>Latest Products
                 <Link to="/search" className="findmore">
                     More
