@@ -55,6 +55,19 @@ $color3: rgb(0, 104, 136);
 @import "login";
 @import "search";
 
+.container {
+    max-width: 1367px;
+    width: 100%;
+    margin: auto;
+    overflow: auto;
+
+    >h1 {
+        @include heading;
+        margin: 1rem 0;
+        text-align: left;
+    }
+}
+
 .heading {
     @include heading;
     margin: 1rem 0;
