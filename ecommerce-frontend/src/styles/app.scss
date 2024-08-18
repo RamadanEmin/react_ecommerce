@@ -52,6 +52,13 @@ $color3: rgb(0, 104, 136);
 @import "cart";
 @import "imageSlider";
 @import "shipping";
+@import "login";
+
+.heading {
+    @include heading;
+    margin: 1rem 0;
+    text-align: center;
+}
 
 .header {
     @include flex(row, flex-end, stretch, 1.2rem);
