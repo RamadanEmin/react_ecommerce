@@ -53,6 +53,7 @@ $color3: rgb(0, 104, 136);
 @import "imageSlider";
 @import "shipping";
 @import "login";
+@import "search";
 
 .heading {
     @include heading;
