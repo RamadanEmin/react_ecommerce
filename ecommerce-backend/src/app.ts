@@ -16,10 +16,6 @@ connectDB(mongoURI);
 const app = express();
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('API Working with /api/v1');
-})
-
 app.use('/api/v1/user', userRoute);
 
 app.listen(port, () => {
