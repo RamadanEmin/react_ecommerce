@@ -1,5 +1,6 @@
 import express from 'express';
-import { connectDB } from './utils/features.js';
+import { connectDB, connectRedis } from './utils/features.js';
+import { errorMiddleware } from './middlewares/error.js';
 import { config } from 'dotenv';
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -12,8 +13,11 @@ config({
 
 const port = process.env.PORT || 4000;
 const mongoURI = process.env.MONGO_URI || '';
+const redisURI = process.env.REDIS_URI || '';
+export const redisTTL = process.env.REDIS_TTL || 60 * 60 * 4;
 
 connectDB(mongoURI);
+export const redis = connectRedis(redisURI);
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -24,8 +28,15 @@ cloudinary.config({
 const app = express();
 app.use(express.json());
 
+app.get('/', (req, res) => {
+    res.send('API Working with /api/v1');
+});
+
 app.use('/api/v1/user', userRoute);
 app.use('/api/v1/product', productRoute);
+
+app.use('/uploads', express.static('uploads'));
+app.use(errorMiddleware);
 
 app.listen(port, () => {
     console.log(`Server is working on http://localhost:${port}`);
