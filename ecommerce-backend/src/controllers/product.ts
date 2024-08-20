@@ -6,9 +6,8 @@ import {
     BaseQuery,
     NewProductRequestBody, SearchRequestQuery,
 } from '../types/types.js';
-import { uploadToCloudinary, } from '../utils/features.js';
+import { uploadToCloudinary } from '../utils/features.js';
 import ErrorHandler from '../utils/utility-class.js';
-
 
 export const newProduct = TryCatch(
     async (req: Request<{}, {}, NewProductRequestBody>, res, next) => {
@@ -56,7 +55,7 @@ export const getlatestProducts = TryCatch(async (req, res, next) => {
 
     if (products) {
         products = JSON.parse(products);
-    }else {
+    } else {
         products = await Product.find({}).sort({ createdAt: -1 }).limit(5);
         await redis.setex('latest-products', redisTTL, JSON.stringify(products));
     }
@@ -100,7 +99,7 @@ export const getAllProducts = TryCatch(
                     $lte: Number(price),
                 };
 
-            if (category){
+            if (category) {
                 baseQuery.category = category;
             }
 
@@ -127,3 +126,21 @@ export const getAllProducts = TryCatch(
         });
     }
 );
+
+export const getAllCategories = TryCatch(async (req, res, next) => {
+    let categories;
+
+    categories = await redis.get('categories');
+
+    if (categories) {
+        categories = JSON.parse(categories);
+    } else {
+        categories = await Product.distinct('category');
+        await redis.setex('categories', redisTTL, JSON.stringify(categories));
+    }
+
+    return res.status(200).json({
+        success: true,
+        categories
+    });
+});
