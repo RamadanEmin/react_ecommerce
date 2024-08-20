@@ -1,9 +1,8 @@
 import { Request } from 'express';
 import { TryCatch } from '../middlewares/error.js';
+import { redis, redisTTL } from '../app.js';
 import { Product } from '../models/product.js';
-import {
-    NewProductRequestBody,
-} from '../types/types.js';
+import { NewProductRequestBody } from '../types/types.js';
 import { uploadToCloudinary, } from '../utils/features.js';
 import ErrorHandler from '../utils/utility-class.js';
 
@@ -46,3 +45,21 @@ export const newProduct = TryCatch(
         });
     }
 );
+
+export const getlatestProducts = TryCatch(async (req, res, next) => {
+    let products;
+
+    products = await redis.get('latest-products');
+
+    if (products) {
+        products = JSON.parse(products);
+    } else {
+        products = await Product.find({}).sort({ createdAt: -1 }).limit(5);
+        await redis.setex('latest-products', redisTTL, JSON.stringify(products));
+    }
+
+    return res.status(200).json({
+        success: true,
+        products,
+    });
+});
