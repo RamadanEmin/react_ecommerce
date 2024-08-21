@@ -236,3 +236,27 @@ export const updateProduct = TryCatch(async (req, res, next) => {
         message: 'Product Updated Successfully',
     });
 });
+
+export const deleteProduct = TryCatch(async (req, res, next) => {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+        return next(new ErrorHandler('Product Not Found', 404));
+    }
+
+    const ids = product.photos.map((photo) => photo.public_id);
+
+    await deleteFromCloudinary(ids);
+
+    await product.deleteOne();
+
+    await invalidateCache({
+        product: true,
+        productId: String(product._id),
+        admin: true
+    });
+
+    return res.status(200).json({
+        success: true,
+        message: 'Product Deleted Successfully'
+    });
+});
