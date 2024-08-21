@@ -6,7 +6,7 @@ import {
     BaseQuery,
     NewProductRequestBody, SearchRequestQuery,
 } from '../types/types.js';
-import { invalidateCache, uploadToCloudinary } from '../utils/features.js';
+import { deleteFromCloudinary, invalidateCache, uploadToCloudinary } from '../utils/features.js';
 import ErrorHandler from '../utils/utility-class.js';
 
 export const newProduct = TryCatch(
@@ -195,6 +195,16 @@ export const updateProduct = TryCatch(async (req, res, next) => {
 
     if (!product) {
         return next(new ErrorHandler('Product Not Found', 404));
+    }
+
+    if (photos && photos.length > 0) {
+        const photosURL = await uploadToCloudinary(photos);
+
+        const ids = product.photos.map((photo) => photo.public_id);
+
+        await deleteFromCloudinary(ids);
+
+        product.photos = photosURL;
     }
 
     if (name) {
