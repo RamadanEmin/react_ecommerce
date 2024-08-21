@@ -6,7 +6,7 @@ import {
     BaseQuery,
     NewProductRequestBody, SearchRequestQuery,
 } from '../types/types.js';
-import { uploadToCloudinary } from '../utils/features.js';
+import { invalidateCache, uploadToCloudinary } from '../utils/features.js';
 import ErrorHandler from '../utils/utility-class.js';
 
 export const newProduct = TryCatch(
@@ -183,5 +183,46 @@ export const getSingleProduct = TryCatch(async (req, res, next) => {
     return res.status(200).json({
         success: true,
         product
+    });
+});
+
+export const updateProduct = TryCatch(async (req, res, next) => {
+    const { id } = req.params;
+    const { name, price, stock, category, description } = req.body;
+    const photos = req.files as Express.Multer.File[] | undefined;
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+        return next(new ErrorHandler('Product Not Found', 404));
+    }
+
+    if (name) {
+        product.name = name;
+    }
+    if (price) {
+        product.price = price;
+    }
+    if (stock) {
+        product.stock = stock;
+    }
+    if (category) {
+        product.category = category;
+    }
+    if (description) {
+        product.description = description;
+    }
+
+    await product.save();
+
+    await invalidateCache({
+        product: true,
+        productId: String(product._id),
+        admin: true
+    });
+
+    return res.status(200).json({
+        success: true,
+        message: 'Product Updated Successfully',
     });
 });
