@@ -162,3 +162,26 @@ export const getAdminProducts = TryCatch(async (req, res, next) => {
         products
     });
 });
+
+export const getSingleProduct = TryCatch(async (req, res, next) => {
+    let product;
+    const id = req.params.id;
+    const key = `product-${id}`;
+
+    product = await redis.get(key);
+    if (product) {
+        product = JSON.parse(product);
+    } else {
+        product = await Product.findById(id);
+        if (!product) {
+            return next(new ErrorHandler('Product Not Found', 404));
+        }
+
+        await redis.setex(key, redisTTL, JSON.stringify(product));
+    }
+
+    return res.status(200).json({
+        success: true,
+        product
+    });
+});
