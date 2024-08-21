@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+    getAdminProducts,
     getAllCategories,
     getAllProducts,
     getlatestProducts,
@@ -14,5 +15,6 @@ app.post('/new', adminOnly, mutliUpload, newProduct);
 app.get('/all', getAllProducts);
 app.get('/latest', getlatestProducts);
 app.get('/categories', getAllCategories);
+app.get('/admin-products', adminOnly, getAdminProducts);
 
 export default app;
