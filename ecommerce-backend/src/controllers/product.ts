@@ -270,12 +270,12 @@ export const deleteProduct = TryCatch(async (req, res, next) => {
 export const newReview = TryCatch(async (req, res, next) => {
     const user = await User.findById(req.query.id);
 
-    if (!user){
+    if (!user) {
         return next(new ErrorHandler('Not Logged In', 404));
     }
 
     const product = await Product.findById(req.params.id);
-    if (!product){
+    if (!product) {
         return next(new ErrorHandler('Product Not Found', 404));
     }
 
@@ -317,5 +317,29 @@ export const newReview = TryCatch(async (req, res, next) => {
     return res.status(alreadyReviewed ? 200 : 201).json({
         success: true,
         message: alreadyReviewed ? 'Review Update' : 'Review Added',
+    });
+});
+
+export const allReviewsOfProduct = TryCatch(async (req, res, next) => {
+    let reviews;
+    const key = `reviews-${req.params.id}`;
+
+    reviews = await redis.get(key);
+
+    if (reviews){
+        reviews = JSON.parse(reviews);
+    }else {
+        reviews = await Review.find({
+            product: req.params.id,
+        })
+            .populate('user', 'name photo')
+            .sort({ updatedAt: -1 });
+
+        await redis.setex(key, redisTTL, JSON.stringify(reviews));
+    }
+
+    return res.status(200).json({
+        success: true,
+        reviews
     });
 });

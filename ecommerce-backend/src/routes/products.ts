@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+    allReviewsOfProduct,
     deleteProduct,
     getAdminProducts,
     getAllCategories,
@@ -26,6 +27,7 @@ app
     .put(adminOnly, mutliUpload, updateProduct)
     .delete(adminOnly, deleteProduct);
 
+app.get('/reviews/:id', allReviewsOfProduct);
 app.post('/review/new/:id', newReview);
 
 export default app;
