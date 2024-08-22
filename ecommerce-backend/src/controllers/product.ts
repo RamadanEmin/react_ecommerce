@@ -6,8 +6,10 @@ import {
     BaseQuery,
     NewProductRequestBody, SearchRequestQuery,
 } from '../types/types.js';
-import { deleteFromCloudinary, invalidateCache, uploadToCloudinary } from '../utils/features.js';
+import { deleteFromCloudinary, findAverageRatings, invalidateCache, uploadToCloudinary } from '../utils/features.js';
 import ErrorHandler from '../utils/utility-class.js';
+import { Review } from '../models/review.js';
+import { User } from '../models/user.js';
 
 export const newProduct = TryCatch(
     async (req: Request<{}, {}, NewProductRequestBody>, res, next) => {
@@ -40,6 +42,8 @@ export const newProduct = TryCatch(
             category: category.toLowerCase(),
             photos: photosURL
         });
+
+        await invalidateCache({ product: true, admin: true });
 
         return res.status(201).json({
             success: true,
@@ -88,16 +92,18 @@ export const getAllProducts = TryCatch(
 
             const baseQuery: BaseQuery = {};
 
-            if (search)
+            if (search) {
                 baseQuery.name = {
                     $regex: search,
                     $options: "i",
                 };
+            }
 
-            if (price)
+            if (price) {
                 baseQuery.price = {
                     $lte: Number(price),
                 };
+            }
 
             if (category) {
                 baseQuery.category = category;
@@ -258,5 +264,58 @@ export const deleteProduct = TryCatch(async (req, res, next) => {
     return res.status(200).json({
         success: true,
         message: 'Product Deleted Successfully'
+    });
+});
+
+export const newReview = TryCatch(async (req, res, next) => {
+    const user = await User.findById(req.query.id);
+
+    if (!user){
+        return next(new ErrorHandler('Not Logged In', 404));
+    }
+
+    const product = await Product.findById(req.params.id);
+    if (!product){
+        return next(new ErrorHandler('Product Not Found', 404));
+    }
+
+    const { comment, rating } = req.body;
+
+    const alreadyReviewed = await Review.findOne({
+        user: user._id,
+        product: product._id,
+    });
+
+    if (alreadyReviewed) {
+        alreadyReviewed.comment = comment;
+        alreadyReviewed.rating = rating;
+
+        await alreadyReviewed.save();
+    } else {
+        await Review.create({
+            comment,
+            rating,
+            user: user._id,
+            product: product._id,
+        });
+    }
+
+    const { ratings, numOfReviews } = await findAverageRatings(product._id);
+
+    product.ratings = ratings;
+    product.numOfReviews = numOfReviews;
+
+    await product.save();
+
+    await invalidateCache({
+        product: true,
+        productId: String(product._id),
+        admin: true,
+        review: true,
+    });
+
+    return res.status(alreadyReviewed ? 200 : 201).json({
+        success: true,
+        message: alreadyReviewed ? 'Review Update' : 'Review Added',
     });
 });

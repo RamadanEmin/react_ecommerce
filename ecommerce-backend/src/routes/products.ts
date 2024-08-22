@@ -7,6 +7,7 @@ import {
     getlatestProducts,
     getSingleProduct,
     newProduct,
+    newReview,
     updateProduct
 } from '../controllers/product.js';
 import { adminOnly } from '../middlewares/auth.js';
@@ -24,5 +25,7 @@ app
     .get(getSingleProduct)
     .put(adminOnly, mutliUpload, updateProduct)
     .delete(adminOnly, deleteProduct);
+
+app.post('/review/new/:id', newReview);
 
 export default app;
