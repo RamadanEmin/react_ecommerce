@@ -3,6 +3,7 @@ import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { Redis } from 'ioredis';
 import { redis } from '../app.js';
 import { InvalidateCacheProps } from '../types/types.js';
+import { Review } from '../models/review.js';
 
 export const connectDB = (uri: string) => {
     mongoose
@@ -77,10 +78,13 @@ export const invalidateCache = async ({
             'all-products',
         ];
 
-        if (typeof productId === 'string') productKeys.push(`product-${productId}`);
+        if (typeof productId === 'string') {
+            productKeys.push(`product-${productId}`);
+        }
 
-        if (typeof productId === 'object')
+        if (typeof productId === 'object') {
             productId.forEach((i) => productKeys.push(`product-${i}`));
+        }
 
         await redis.del(productKeys);
     }
@@ -101,4 +105,22 @@ export const invalidateCache = async ({
             'admin-line-charts'
         ]);
     }
+};
+
+export const findAverageRatings = async (
+    productId: mongoose.Types.ObjectId
+) => {
+    let totalRating = 0;
+
+    const reviews = await Review.find({ product: productId });
+    reviews.forEach((review) => {
+        totalRating += review.rating;
+    });
+
+    const averateRating = totalRating / reviews.length || 0;
+
+    return {
+        numOfReviews: reviews.length,
+        ratings: averateRating
+    };
 };
