@@ -2,6 +2,7 @@ import express from 'express';
 import {
     allReviewsOfProduct,
     deleteProduct,
+    deleteReview,
     getAdminProducts,
     getAllCategories,
     getAllProducts,
@@ -29,5 +30,6 @@ app
 
 app.get('/reviews/:id', allReviewsOfProduct);
 app.post('/review/new/:id', newReview);
+app.delete('/review/:id', deleteReview);
 
 export default app;
