@@ -90,3 +90,27 @@ export const allOrders = TryCatch(async (req, res, next) => {
         orders
     });
 });
+
+export const getSingleOrder = TryCatch(async (req, res, next) => {
+    const { id } = req.params;
+    const key = `order-${id}`;
+
+    let order;
+    order = await redis.get(key);
+
+    if (order){
+        order = JSON.parse(order);
+    }else {
+        order = await Order.findById(id).populate('user', 'name');
+
+        if (!order){
+            return next(new ErrorHandler('Order Not Found', 404));
+        }
+
+        await redis.setex(key, redisTTL, JSON.stringify(order));
+    }
+    return res.status(200).json({
+        success: true,
+        order
+    });
+});
