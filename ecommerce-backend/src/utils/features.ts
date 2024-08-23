@@ -2,8 +2,9 @@ import mongoose from 'mongoose';
 import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import { Redis } from 'ioredis';
 import { redis } from '../app.js';
-import { InvalidateCacheProps } from '../types/types.js';
+import { InvalidateCacheProps, OrderItemType } from '../types/types.js';
 import { Review } from '../models/review.js';
+import { Product } from "../models/product.js";
 
 export const connectDB = (uri: string) => {
     mongoose
@@ -123,4 +124,17 @@ export const findAverageRatings = async (
         numOfReviews: reviews.length,
         ratings: averateRating
     };
+};
+
+export const reduceStock = async (orderItems: OrderItemType[]) => {
+    for (let i = 0; i < orderItems.length; i++) {
+        const order = orderItems[i];
+        const product = await Product.findById(order.productId);
+        
+        if (!product){
+            throw new Error('Product Not Found!');
+        }
+        product.stock -= order.quantity;
+        await product.save();
+    }
 };

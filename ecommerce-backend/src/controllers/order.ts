@@ -1,10 +1,12 @@
+import { Request } from 'express';
 import { TryCatch } from '../middlewares/error.js';
 import { Order } from '../models/order.js';
-import { invalidateCache } from '../utils/features.js';
+import { NewOrderRequestBody } from '../types/types.js';
+import { invalidateCache, reduceStock } from '../utils/features.js';
 import ErrorHandler from '../utils/utility-class.js';
 
 export const newOrder = TryCatch(
-    async () => {
+    async (req: Request<{}, {}, NewOrderRequestBody>, res, next) => {
         const {
             shippingInfo,
             orderItems,
@@ -30,6 +32,8 @@ export const newOrder = TryCatch(
             discount,
             total
         });
+
+        await reduceStock(orderItems);
 
         await invalidateCache({
             product: true,
