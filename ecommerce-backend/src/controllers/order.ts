@@ -71,3 +71,22 @@ export const myOrders = TryCatch(async (req, res, next) => {
         orders
     });
 });
+
+export const allOrders = TryCatch(async (req, res, next) => {
+    const key = `all-orders`;
+
+    let orders;
+
+    orders = await redis.get(key);
+
+    if (orders) {
+        orders = JSON.parse(orders);
+    } else {
+        orders = await Order.find().populate('user', 'name');
+        await redis.setex(key, redisTTL, JSON.stringify(orders));
+    }
+    return res.status(200).json({
+        success: true,
+        orders
+    });
+});
