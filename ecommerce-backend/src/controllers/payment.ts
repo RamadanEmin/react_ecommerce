@@ -31,3 +31,12 @@ export const applyDiscount = TryCatch(async (req, res, next) => {
         discount: discount.amount
     });
 });
+
+export const allCoupons = TryCatch(async (req, res, next) => {
+    const coupons = await Coupon.find({});
+
+    return res.status(200).json({
+        success: true,
+        coupons
+    });
+});
