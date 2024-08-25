@@ -50,7 +50,9 @@ export const deleteFromCloudinary = async (publicIds: string[]) => {
     const promises = publicIds.map((id) => {
         return new Promise<void>((resolve, reject) => {
             cloudinary.uploader.destroy(id, (error, result) => {
-                if (error) return reject(error);
+                if (error){
+                    return reject(error);
+                }
                 resolve();
             });
         });

@@ -2,10 +2,7 @@ import { Request } from 'express';
 import { TryCatch } from '../middlewares/error.js';
 import { redis, redisTTL } from '../app.js';
 import { Product } from '../models/product.js';
-import {
-    BaseQuery,
-    NewProductRequestBody, SearchRequestQuery,
-} from '../types/types.js';
+import { BaseQuery, NewProductRequestBody, SearchRequestQuery } from '../types/types.js';
 import { deleteFromCloudinary, findAverageRatings, invalidateCache, uploadToCloudinary } from '../utils/features.js';
 import ErrorHandler from '../utils/utility-class.js';
 import { Review } from '../models/review.js';
@@ -239,7 +236,7 @@ export const updateProduct = TryCatch(async (req, res, next) => {
 
     return res.status(200).json({
         success: true,
-        message: 'Product Updated Successfully',
+        message: 'Product Updated Successfully'
     });
 });
 
@@ -326,9 +323,9 @@ export const allReviewsOfProduct = TryCatch(async (req, res, next) => {
 
     reviews = await redis.get(key);
 
-    if (reviews){
+    if (reviews) {
         reviews = JSON.parse(reviews);
-    }else {
+    } else {
         reviews = await Review.find({
             product: req.params.id,
         })
@@ -347,18 +344,18 @@ export const allReviewsOfProduct = TryCatch(async (req, res, next) => {
 export const deleteReview = TryCatch(async (req, res, next) => {
     const user = await User.findById(req.query.id);
 
-    if (!user){
+    if (!user) {
         return next(new ErrorHandler('Not Logged In', 404));
     }
 
     const review = await Review.findById(req.params.id);
-    if (!review){
+    if (!review) {
         return next(new ErrorHandler('Review Not Found', 404));
     }
 
     const isAuthenticUser = review.user.toString() === user._id.toString();
 
-    if (!isAuthenticUser){
+    if (!isAuthenticUser) {
         return next(new ErrorHandler('Not Authorized', 401));
     }
 
@@ -366,7 +363,7 @@ export const deleteReview = TryCatch(async (req, res, next) => {
 
     const product = await Product.findById(review.product);
 
-    if (!product){
+    if (!product) {
         return next(new ErrorHandler('Product Not Found', 404));
     }
 
