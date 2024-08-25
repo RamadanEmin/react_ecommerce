@@ -3,6 +3,7 @@ import { TryCatch } from '../middlewares/error.js';
 import { Order } from '../models/order.js';
 import { Product } from '../models/product.js';
 import { User } from '../models/user.js';
+import { calculatePercentage, getInventories } from '../utils/features.js';
 
 export const getDashboardStats = TryCatch(async (req, res, next) => {
     let stats;
@@ -82,10 +83,17 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
             .limit(4);
 
         const [
+            thisMonthProducts,
+            thisMonthUsers,
+            thisMonthOrders,
+            lastMonthProducts,
+            lastMonthUsers,
+            lastMonthOrders,
             productsCount,
             usersCount,
             allOrders,
             lastSixMonthOrders,
+            categories,
             femaleUsersCount,
             latestTransaction,
         ] = await Promise.all([
@@ -103,6 +111,23 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
             User.countDocuments({ gender: 'female' }),
             latestTransactionsPromise
         ]);
+
+        const thisMonthRevenue = thisMonthOrders.reduce(
+            (total, order) => total + (order.total || 0),
+            0
+        );
+
+        const lastMonthRevenue = lastMonthOrders.reduce(
+            (total, order) => total + (order.total || 0),
+            0
+        );
+
+        const changePercent = {
+            revenue: calculatePercentage(thisMonthRevenue, lastMonthRevenue),
+            product: calculatePercentage(thisMonthProducts.length, lastMonthProducts.length),
+            user: calculatePercentage(thisMonthUsers.length, lastMonthUsers.length),
+            order: calculatePercentage(thisMonthOrders.length, lastMonthOrders.length)
+        };
 
         const revenue = allOrders.reduce(
             (total, order) => total + (order.total || 0),
@@ -129,6 +154,11 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
             }
         });
 
+        const categoryCount = await getInventories({
+            categories,
+            productsCount,
+        });
+
         const userRatio = {
             male: usersCount - femaleUsersCount,
             female: femaleUsersCount
@@ -143,6 +173,8 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
         }));
 
         stats = {
+            categoryCount,
+            changePercent,
             count,
             chart: {
                 order: orderMonthCounts,
