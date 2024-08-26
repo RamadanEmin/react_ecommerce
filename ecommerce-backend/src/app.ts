@@ -4,6 +4,8 @@ import { errorMiddleware } from './middlewares/error.js';
 import { config } from 'dotenv';
 import { v2 as cloudinary } from 'cloudinary';
 import morgan from 'morgan';
+import Stripe from 'stripe';
+import cors from 'cors';
 
 import userRoute from './routes/user.js';
 import productRoute from './routes/products.js';
@@ -19,6 +21,7 @@ const port = process.env.PORT || 4000;
 const mongoURI = process.env.MONGO_URI || '';
 const redisURI = process.env.REDIS_URI || '';
 export const redisTTL = process.env.REDIS_TTL || 60 * 60 * 4;
+const stripeKey = process.env.STRIPE_KEY || '';
 
 connectDB(mongoURI);
 export const redis = connectRedis(redisURI);
@@ -29,9 +32,18 @@ cloudinary.config({
     api_secret: process.env.CLOUD_API_SECRET,
 });
 
+export const stripe = new Stripe(stripeKey);
+
 const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
+app.use(
+    cors({
+        origin: [process.env.CLIENT_URL!],
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        credentials: true
+    })
+);
 
 app.get('/', (req, res) => {
     res.send('API Working with /api/v1');
