@@ -2,7 +2,6 @@ import { FaTrash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import AdminSidebar from '../../../components/admin/AdminSidebar';
 import { OrderItem } from '../../../models/types';
-import { server } from '../../../redux/store';
 
 const img =
     'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804';
@@ -20,17 +19,17 @@ const orderItems: OrderItem[] = [
 const TransactionManagement = () => {
     const [order, setOrder] = useState({
         name: 'Puma Shoes',
-        address: '77 black street',
-        city: 'Neyword',
-        state: 'Nevada',
-        country: 'US',
-        pinCode: 242433,
+        address: 'Tsanko Dustabanov 15',
+        city: 'Plovdiv',
+        municipality: 'Plovdiv',
+        country: 'Bulgaria',
+        postCode: 4000,
         status: 'Processing',
-        subtotal: 4000,
-        discount: 1200,
+        subtotal: 290,
+        discount: 50,
         shippingCharges: 0,
-        tax: 200,
-        total: 4000 + 200 + 0 - 1200,
+        tax: 10,
+        total: 290 + 10 + 0 - 50,
         orderItems,
     });
 
@@ -39,8 +38,8 @@ const TransactionManagement = () => {
         address,
         city,
         country,
-        state,
-        pinCode,
+        municipality,
+        postCode,
         subtotal,
         shippingCharges,
         tax,
@@ -88,7 +87,7 @@ const TransactionManagement = () => {
                     <h5>User Info</h5>
                     <p>Name: {name}</p>
                     <p>
-                        Address: {`${address}, ${city}, ${state}, ${country} ${pinCode}`}
+                        Address: {`${address}, ${city}, ${municipality}, ${country} ${postCode}`}
                     </p>
                     <h5>Amount Info</h5>
                     <p>Subtotal: {subtotal}</p>
