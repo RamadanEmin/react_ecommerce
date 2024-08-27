@@ -7,10 +7,13 @@ import {
     FaUser,
     FaSignOutAlt,
 } from 'react-icons/fa';
+import { User } from '../types/types';
 
-const user = { _id: '', role: '' };
+interface PropsType {
+    user: User | null;
+}
 
-const Header = () => {
+const Header = ({ user }: PropsType) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const logoutHandler = () => {
@@ -29,7 +32,7 @@ const Header = () => {
                 <FaShoppingBag />
             </Link>
 
-            {user._id ? (
+            {user?._id ? (
                 <>
                     <button onClick={() => setIsOpen((prev) => !prev)}>
                         <FaUser />
