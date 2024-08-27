@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { userExist, userNotExist } from './redux/reducer/userReducer';
 import { getUser } from './redux/api/userAPI';
 import { RootState } from './redux/store';
+import ProtectedRoute from './components/protected-route';
 
 const Cart = lazy(() => import('./pages/cart'));
 const Home = lazy(() => import('./pages/home'));
@@ -63,15 +64,30 @@ const App = () => {
                         <Route path='/' element={<Home />} />
                         <Route path='/search' element={<Search />} />
                         <Route path='/cart' element={<Cart />} />
-                        <Route path='/login' element={<Login />} />
+                        <Route
+                            path='/login'
+                            element={
+                                <ProtectedRoute isAuthenticated={user ? false : true}>
+                                    <Login />
+                                </ProtectedRoute>
+                            }
+                        />
 
-                        <Route>
+                        <Route element={<ProtectedRoute isAuthenticated={user ? true : false} />}>
                             <Route path='/shipping' element={<Shipping />} />
                             <Route path='/orders' element={<Orders />} />
                             <Route path='/order/:id' element={<OrderDetails />} />
                         </Route>
 
-                        <Route>
+                        <Route
+                            element={
+                                <ProtectedRoute
+                                    isAuthenticated={true}
+                                    adminOnly={true}
+                                    admin={user?.role === 'admin' ? true : false}
+                                />
+                            }
+                        >
                             <Route path='/admin/dashboard' element={<Dashboard />} />
                             <Route path='/admin/product' element={<Products />} />
                             <Route path='/admin/customer' element={<Customers />} />
