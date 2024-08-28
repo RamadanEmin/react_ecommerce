@@ -22,7 +22,29 @@ export const productAPI = createApi({
         categories: builder.query<CategoriesResponse, string>({
             query: () => `categories`,
         }),
+        searchProducts: builder.query<SearchProductsResponse, SearchProductsRequest>({
+            query: ({ price, search, sort, category, page }) => {
+                let base = `all?search=${search}&page=${page}`;
+
+                if (price) {
+                    base += `&price=${price}`;
+                }
+                if (sort) {
+                    base += `&sort=${sort}`;
+                }
+                if (category) {
+                    base += `&category=${category}`;
+                }
+
+                return base;
+            }
+        })
     })
 });
 
-export const { useLatestProductsQuery, useAllProductsQuery, useCategoriesQuery } = productAPI;
+export const {
+    useLatestProductsQuery,
+    useAllProductsQuery,
+    useCategoriesQuery,
+    useSearchProductsQuery
+} = productAPI;
