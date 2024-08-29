@@ -1,14 +1,19 @@
 import { useFileHandler } from '6pp';
 import { FormEvent, useEffect, useState } from 'react';
 import { FaTrash } from 'react-icons/fa';
-import { Navigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import AdminSidebar from '../../../components/admin/AdminSidebar';
 import { Skeleton } from '../../../components/loader';
-import { useProductDetailsQuery } from '../../../redux/api/productAPI';
-import { transformImage } from '../../../utils/features';
+import { useDeleteProductMutation, useProductDetailsQuery, useUpdateProductMutation } from '../../../redux/api/productAPI';
+import { RootState } from '../../../redux/store';
+import { responseToast, transformImage } from '../../../utils/features';
 
 const Productmanagement = () => {
+    const { user } = useSelector((state: RootState) => state.userReducer);
+
     const params = useParams();
+    const navigate = useNavigate();
 
     const { data, isLoading, isError } = useProductDetailsQuery(params.id!);
 
@@ -31,9 +36,58 @@ const Productmanagement = () => {
 
     const photosFiles = useFileHandler('multiple', 10, 5);
 
+    const [updateProduct] = useUpdateProductMutation();
+    const [deleteProduct] = useDeleteProductMutation();
+
     const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        setBtnLoading(true);
+        try {
+            const formData = new FormData();
+
+            if (nameUpdate) {
+                formData.set('name', nameUpdate);
+            }
+            if (descriptionUpdate) {
+                formData.set('description', descriptionUpdate);
+            }
+            if (priceUpdate) {
+                formData.set('price', priceUpdate.toString());
+            }
+            if (stockUpdate !== undefined) {
+                formData.set('stock', stockUpdate.toString());
+            }
+            if (categoryUpdate) {
+                formData.set('category', categoryUpdate);
+            }
+            if (photosFiles.file && photosFiles.file.length > 0) {
+                photosFiles.file.forEach((file) => {
+                    formData.append('photos', file);
+                });
+            }
+
+            const res = await updateProduct({
+                formData,
+                userId: user?._id!,
+                productId: data?.product._id!
+            });
+
+            responseToast(res, navigate, '/admin/product');
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setBtnLoading(false);
+        }
+    };
+
+    const deleteHandler = async () => {
+        const res = await deleteProduct({
+            userId: user?._id!,
+            productId: data?.product._id!
+        });
+
+        responseToast(res, navigate, '/admin/product');
     };
 
     useEffect(() => {
@@ -70,7 +124,7 @@ const Productmanagement = () => {
                             <h3>{price} лв.</h3>
                         </section>
                         <article>
-                            <button className="product-delete-btn">
+                            <button className="product-delete-btn" onClick={deleteHandler}>
                                 <FaTrash />
                             </button>
                             <form onSubmit={submitHandler}>
