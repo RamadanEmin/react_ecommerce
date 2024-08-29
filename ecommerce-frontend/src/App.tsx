@@ -19,6 +19,7 @@ const Login = lazy(() => import('./pages/login'));
 const Orders = lazy(() => import('./pages/orders'));
 const OrderDetails = lazy(() => import('./pages/order-details'));
 const NotFound = lazy(() => import('./pages/not-found'));
+const ProductDetails = lazy(() => import("./pages/product-details"));
 
 const Dashboard = lazy(() => import('./pages/admin/dashboard'));
 const Products = lazy(() => import('./pages/admin/products'));
@@ -64,6 +65,7 @@ const App = () => {
                     <Routes>
                         <Route path='/' element={<Home />} />
                         <Route path='/search' element={<Search />} />
+                        <Route path='/product/:id' element={<ProductDetails />} />
                         <Route path='/cart' element={<Cart />} />
                         <Route
                             path='/login'
