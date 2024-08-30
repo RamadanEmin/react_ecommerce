@@ -1,4 +1,4 @@
-import { Product, User } from './types';
+import { Product, Review, User } from './types';
 
 export type MessageResponse = {
     success: boolean;
@@ -59,4 +59,21 @@ export type UpdateProductRequest = {
 export type DeleteProductRequest = {
     userId: string;
     productId: string;
+};
+
+export type NewReviewRequest = {
+    rating: number;
+    comment: string;
+    userId?: string;
+    productId: string;
+};
+
+export type AllReviewsResponse = {
+    success: boolean;
+    reviews: Review[];
+};
+
+export type DeleteReviewRequest = {
+    userId?: string;
+    reviewId: string;
 };
