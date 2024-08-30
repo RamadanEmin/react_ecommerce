@@ -10,10 +10,13 @@ import { Skeleton } from '../components/loader';
 import RatingsComponent from '../components/ratings';
 import {
     useAllReviewsOfProductsQuery,
+    useDeleteReviewMutation,
+    useNewReviewMutation,
     useProductDetailsQuery
 } from '../redux/api/productAPI';
 import { RootState } from '../redux/store';
 import { Review } from '../types/types';
+import { responseToast } from '../utils/features';
 
 const ProductDetails = () => {
     const params = useParams();
@@ -28,6 +31,9 @@ const ProductDetails = () => {
     const [reviewComment, setReviewComment] = useState('');
     const reviewDialogRef = useRef<HTMLDialogElement>(null);
     const [reviewSubmitLoading, setReviewSubmitLoading] = useState(false);
+
+    const [createReview] = useNewReviewMutation();
+    const [deleteReview] = useDeleteReviewMutation();
 
     const [reviews, setReviews] = useState<Review[]>([]);
 
@@ -73,6 +79,32 @@ const ProductDetails = () => {
         reviewDialogRef.current?.close();
         setRating(0);
         setReviewComment('');
+    };
+
+    const submitReview = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setReviewSubmitLoading(true);
+        reviewCloseHandler();
+
+        const res = await createReview({
+            comment: reviewComment,
+            rating,
+            userId: user?._id,
+            productId: params.id!,
+        });
+
+        setReviewSubmitLoading(false);
+
+        responseToast(res, null, '');
+    };
+
+    const handleDeleteReview = async (reviewId: string) => {
+        const res = await deleteReview({ reviewId, userId: user?._id });
+        responseToast(res, null, '');
+
+        if (res?.data?.success) {
+            setReviews(reviews.filter((review) => review._id !== reviewId));
+        }
     };
 
     return (
@@ -130,7 +162,7 @@ const ProductDetails = () => {
             <dialog ref={reviewDialogRef} className="review-dialog">
                 <button onClick={reviewCloseHandler}>X</button>
                 <h2>Write a Review</h2>
-                <form>
+                <form onSubmit={submitReview}>
                     <textarea
                         value={reviewComment}
                         onChange={(e) => setReviewComment(e.target.value)}
@@ -172,6 +204,7 @@ const ProductDetails = () => {
                     ) : (
                         reviews.map((review) => (
                             <ReviewCard
+                                handleDeleteReview={handleDeleteReview}
                                 userId={user?._id}
                                 key={review._id}
                                 review={review}
