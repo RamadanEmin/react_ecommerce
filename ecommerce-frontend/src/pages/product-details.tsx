@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { FaTrash } from 'react-icons/fa';
 import { FaArrowLeftLong, FaArrowRightLong, FaRegStar, FaStar } from 'react-icons/fa6';
 import { FiEdit } from 'react-icons/fi';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, useParams } from 'react-router-dom';
 import { Skeleton } from '../components/loader';
 import RatingsComponent from '../components/ratings';
@@ -14,12 +14,14 @@ import {
     useNewReviewMutation,
     useProductDetailsQuery
 } from '../redux/api/productAPI';
+import { addToCart } from '../redux/reducer/cartReducer';
 import { RootState } from '../redux/store';
-import { Review } from '../types/types';
+import { CartItem, Review } from '../types/types';
 import { responseToast } from '../utils/features';
 
 const ProductDetails = () => {
     const params = useParams();
+    const dispatch = useDispatch();
 
     const { user } = useSelector((state: RootState) => state.userReducer);
 
@@ -45,13 +47,23 @@ const ProductDetails = () => {
 
     const decrement = () => setQuantity((prev) => prev - 1);
     const increment = () => {
-        if (data?.product?.stock === quantity){
+        if (data?.product?.stock === quantity) {
             return toast.error(`${data?.product?.stock} available only`);
         }
         setQuantity((prev) => prev + 1);
     };
 
-    if (isError){
+    const addToCartHandler = (cartItem: CartItem) => {
+        if (cartItem.stock < 1) {
+            return toast.error('Out of Stock');
+        }
+
+        dispatch(addToCart(cartItem));
+        toast.success('Added to cart');
+    };
+
+
+    if (isError) {
         return <Navigate to='/404' />;
     }
 
@@ -148,7 +160,18 @@ const ProductDetails = () => {
                                     <span>{quantity}</span>
                                     <button onClick={increment}>+</button>
                                 </div>
-                                <button>
+                                <button
+                                    onClick={() =>
+                                        addToCartHandler({
+                                            productId: data?.product?._id!,
+                                            name: data?.product?.name!,
+                                            price: data?.product?.price!,
+                                            stock: data?.product?.stock!,
+                                            quantity,
+                                            photo: data?.product?.photos[0].url || "",
+                                        })
+                                    }
+                                >
                                     Add To Cart
                                 </button>
                             </article>

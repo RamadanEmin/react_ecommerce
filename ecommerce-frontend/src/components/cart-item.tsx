@@ -18,7 +18,7 @@ const CartItemComponent = ({ cartItem, incrementHandler, decrementHandler, remov
             <img src={transformImage(photo)} alt={name} />
             <article>
                 <Link to={`/product/${productId}`}>{name}</Link>
-                <span>₹{price}</span>
+                <span>{price} лв.</span>
             </article>
 
             <div>
