@@ -8,6 +8,9 @@ import { ImageSlider } from '../components/imageSlider';
 import { useLatestProductsQuery } from '../redux/api/productAPI';
 import { toast } from 'react-hot-toast';
 import { Skeleton } from '../components/loader';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../redux/reducer/cartReducer';
+import { CartItem } from '../types/types';
 
 const IMAGES = [
     { url: image1, alt: 'Image One' },
@@ -19,8 +22,15 @@ const IMAGES = [
 const Home = () => {
     const { data, isError, isLoading } = useLatestProductsQuery('');
 
-    const addToCartHandler = () => {
+    const dispatch = useDispatch();
 
+    const addToCartHandler = (cartItem: CartItem) => {
+        if (cartItem.stock < 1) {
+            return toast.error('Out of Stock');
+        }
+
+        dispatch(addToCart(cartItem));
+        toast.success('Added to cart');
     };
 
     if (isError) {
