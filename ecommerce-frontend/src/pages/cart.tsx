@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { VscError } from 'react-icons/vsc';
 import { useDispatch, useSelector } from 'react-redux';
 import CartItemCard from '../components/cart-item';
-import { RootState } from '../redux/store';
+import { RootState, server } from '../redux/store';
 import { CartItem } from '../types/types';
-import { addToCart, removeCartItem } from '../redux/reducer/cartReducer';
+import { addToCart, calculatePrice, discountApplied, removeCartItem } from '../redux/reducer/cartReducer';
+import axios from 'axios';
 
 const Cart = () => {
     const { cartItems, subtotal, tax, total, shippingCharges, discount } = useSelector((state: RootState) => state.cartReducer);
@@ -35,19 +36,35 @@ const Cart = () => {
     };
 
     useEffect(() => {
-        const timeOutId = setTimeout(() => {
-            if (Math.random() > 0.5) {
-                setIsValidCouponCode(true);
-            } else {
-                setIsValidCouponCode(false);
-            }
+        const { token: cancelToken, cancel } = axios.CancelToken.source();
+
+        const timeOutID = setTimeout(() => {
+            axios
+                .get(`${server}/api/v1/payment/discount?coupon=${couponCode}`, {
+                    cancelToken
+                })
+                .then((res) => {
+                    dispatch(discountApplied(res.data.discount));
+                    setIsValidCouponCode(true);
+                    dispatch(calculatePrice());
+                })
+                .catch(() => {
+                    dispatch(discountApplied(0));
+                    setIsValidCouponCode(false);
+                    dispatch(calculatePrice());
+                });
         }, 1000);
 
         return () => {
-            clearTimeout(timeOutId);
+            clearTimeout(timeOutID);
+            cancel();
             setIsValidCouponCode(false);
         };
     }, [couponCode]);
+
+    useEffect(() => {
+        dispatch(calculatePrice());
+    }, [cartItems]);
 
     return (
         <div className="cart">
