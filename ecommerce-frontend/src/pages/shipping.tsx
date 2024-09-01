@@ -1,8 +1,13 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { BiArrowBack } from 'react-icons/bi';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { RootState } from '../redux/store';
 
 const Shipping = () => {
+    const { cartItems, total } = useSelector((state: RootState) => state.cartReducer);
+    const dispatch = useDispatch();
+
     const navigate = useNavigate();
 
     const [shippingInfo, setShippingInfo] = useState({
@@ -18,6 +23,12 @@ const Shipping = () => {
     ) => {
         setShippingInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
+
+    useEffect(() => {
+        if (cartItems.length <= 0){
+            return navigate('/cart');
+        }
+    }, [cartItems]);
 
     return (
         <div className="shipping">
