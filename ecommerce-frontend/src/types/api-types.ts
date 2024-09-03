@@ -1,4 +1,4 @@
-import { CartItem, Order, Product, Review, ShippingInfo, User } from './types';
+import { Bar, CartItem, Line, Order, Pie, Product, Review, ShippingInfo, Stats, User } from './types';
 
 export type MessageResponse = {
     success: boolean;
@@ -112,4 +112,24 @@ export type AllUsersResponse = {
 export type DeleteUserRequest = {
     userId: string;
     adminUserId: string;
+};
+
+export type StatsResponse = {
+    success: boolean;
+    stats: Stats;
+};
+
+export type BarResponse = {
+    success: boolean;
+    charts: Bar;
+};
+
+export type PieResponse = {
+    success: boolean;
+    charts: Pie;
+};
+
+export type LineResponse = {
+    success: boolean;
+    charts: Line;
 };
