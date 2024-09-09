@@ -1,6 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
-import Loader from './components/loader';
+import Loader, { LoaderLayout } from './components/loader';
 import Header from './components/header';
 import { Toaster } from 'react-hot-toast';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -10,6 +10,7 @@ import { userExist, userNotExist } from './redux/reducer/userReducer';
 import { getUser } from './redux/api/userAPI';
 import { RootState } from './redux/store';
 import ProtectedRoute from './components/protected-route';
+import Footer from './components/footer';
 
 const Cart = lazy(() => import('./pages/cart'));
 const Home = lazy(() => import('./pages/home'));
@@ -61,7 +62,7 @@ const App = () => {
             <Router>
                 <Header user={user} />
 
-                <Suspense fallback={<Loader />}>
+                <Suspense fallback={<LoaderLayout />}>
                     <Routes>
                         <Route path='/' element={<Home />} />
                         <Route path='/search' element={<Search />} />
@@ -110,6 +111,7 @@ const App = () => {
                         <Route path='*' element={<NotFound />} />
                     </Routes>
                 </Suspense >
+                <Footer />
                 <Toaster position='bottom-center' />
             </Router>
         );
