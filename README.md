@@ -102,28 +102,28 @@
 
 ## Home Page
 
-<img src="./eccomerce-frontend/src/assets/images/home.jpg"  width= 600px height= 1100px>
+<img src="./ecommerce-frontend/src/assets/images/home.jpg"  width= 600px height= 1100px>
 
 ## Catalog
 
-<img src="./eccomerce-frontend/src/assets/images/catalog.jpg"  width= 700px height= 700px>
+<img src="./ecommerce-frontend/src/assets/images/catalog.jpg"  width= 700px height= 700px>
 
 ## Product Details
 
-<img src="./eccomerce-frontend/src/assets/images/product.jpg"  width= 700px height= 700px>
+<img src="./ecommerce-frontend/src/assets/images/product.jpg"  width= 700px height= 700px>
 
 ## Cart
 
-<img src="./eccomerce-frontend/src/assets/images/cart.jpg"  width= 700px height= 500px>
+<img src="./ecommerce-frontend/src/assets/images/cart.jpg"  width= 700px height= 500px>
 
 ## Admin dashboard
 
-<img src="./eccomerce-frontend/src/assets/images/dashboard.jpg"  width= 700px height= 500px>
+<img src="./ecommerce-frontend/src/assets/images/dashboard.jpg"  width= 700px height= 500px>
 
 ## Admin Products add page
 
-<img src="./eccomerce-frontend/src/assets/images/products.jpg"  width= 700px height= 500px>
+<img src="./ecommerce-frontend/src/assets/images/products.jpg"  width= 700px height= 500px>
 
 ## Admin Products manage(edit/delete) page
 
-<img src="./eccomerce-frontend/src/assets/images/edit.jpg"  width= 700px height= 600px>
+<img src="./ecommerce-frontend/src/assets/images/edit.jpg"  width= 700px height= 600px>
