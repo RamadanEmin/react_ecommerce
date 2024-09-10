@@ -78,12 +78,10 @@ const categories = [
     'Tablets - E-Readers',
     'Cameras - Photography',
     'Audio - Headphones',
-    'Wearable Technology',
     'Home Appliances',
     'Gaming',
     'Television - Home Entertainment',
-    'Networking - Smart Home',
-];
+    ];
 
 const services = [
     {
